@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worldcoin Transfer Network</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a472a;
+            --secondary-color: #2e8b57;
+            --accent-color: #20b2aa;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .container-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            background: white;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #1a472a 0%, #2e8b57 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border: none;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-header p {
+            margin: 10px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        .language-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+        
+        .lang-btn:hover {
+            border-color: #20b2aa;
+            color: #20b2aa;
+        }
+        
+        .lang-btn.active {
+            background: #20b2aa;
+            color: white;
+            border-color: #20b2aa;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #20b2aa;
+            box-shadow: 0 0 0 0.2rem rgba(32, 178, 170, 0.1);
+            outline: none;
+        }
+        
+        .row-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #1a472a 0%, #2e8b57 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(42, 131, 87, 0.3);
+        }
+        
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .spinner {
+            display: none;
+            margin-right: 8px;
+        }
+        
+        .spinner.show {
+            display: inline-block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .row-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .language-selector {
+                justify-content: center;
+            }
+            
+            .card-header {
+                padding: 20px;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <h2 id="title">Worldcoin Transfer Network</h2>
+                <p id="subtitle">Únete a nuestra red de transferencias globales</p>
+            </div>
+            
+            <div class="card-body">
+                <!-- Language Selector -->
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="es">Español</button>
+                    <button class="lang-btn" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="th">ไทย</button>
+                    <button class="lang-btn" data-lang="ja">日本語</button>
+                    <button class="lang-btn" data-lang="ko">한국어</button>
+                    <button class="lang-btn" data-lang="pt">Português</button>
+                </div>
+                
+                <!-- Alert Messages -->
+                <div class="alert alert-success" id="successAlert" role="alert">
+                    <strong id="successTitle">¡Éxito!</strong> <span id="successMessage">Tu registro se completó correctamente.</span>
+                </div>
+                <div class="alert alert-error" id="errorAlert" role="alert">
+                    <strong id="errorTitle">Error:</strong> <span id="errorMessage">Por favor intenta de nuevo.</span>
+                </div>
+                
+                <!-- Form -->
+                <form id="registrationForm">
+                    <!-- Full Name -->
+                    <div class="form-group">
+                        <label for="fullName" id="label-fullName">Nombre completo *</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName" required>
+                    </div>
+                    
+                    <!-- Age and Email Row -->
+                    <div class="row-group">
+                        <div class="form-group">
+                            <label for="age" id="label-age">Edad *</label>
+                            <input type="number" class="form-control" id="age" name="age" min="18" max="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" id="label-email">Correo electrónico *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Country and Timezone Row -->
+                    <div class="row-group">
+                        <div class="form-group">
+                            <label for="country" id="label-country">País de residencia *</label>
+                            <select class="form-control" id="country" name="country" required>
+                                <option value="">-- Seleccionar --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timezone" id="label-timezone">Zona horaria *</label>
+                            <select class="form-control" id="timezone" name="timezone" required>
+                                <option value="">-- Seleccionar --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Worldcoin ID -->
+                    <div class="form-group">
+                        <label for="worldcoinId" id="label-worldcoinId">Usuario de Worldcoin (World ID o handle) *</label>
+                        <input type="text" class="form-control" id="worldcoinId" name="worldcoinId" placeholder="0x... o worldcoin_username" required>
+                    </div>
+                    
+                    <!-- Max Transfer Amount -->
+                    <div class="form-group">
+                        <label for="maxTransfer" id="label-maxTransfer">Monto máximo a transferir al mes (USD) *</label>
+                        <input type="number" class="form-control" id="maxTransfer" name="maxTransfer" min="0" step="0.01" required>
+                    </div>
+                    
+                    <!-- Available Hours -->
+                    <div class="form-group">
+                        <label id="label-availableHours">Horario disponible para recibir solicitudes *</label>
+                        <div class="time-inputs">
+                            <div>
+                                <label for="timeFrom" style="margin-bottom: 8px;" id="label-from">Desde</label>
+                                <input type="time" class="form-control" id="timeFrom" name="timeFrom" required>
+                            </div>
+                            <div>
+                                <label for="timeTo" style="margin-bottom: 8px;" id="label-to">Hasta</label>
+                                <input type="time" class="form-control" id="timeTo" name="timeTo" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span class="spinner" id="spinner">⏳</span>
+                        <span id="btnText">Enviar registro</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            es: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "Únete a nuestra red de transferencias globales",
+                'label-fullName': "Nombre completo *",
+                'label-age': "Edad *",
+                'label-email': "Correo electrónico *",
+                'label-country': "País de residencia *",
+                'label-timezone': "Zona horaria *",
+                'label-worldcoinId': "Usuario de Worldcoin (World ID o handle) *",
+                'label-maxTransfer': "Monto máximo a transferir al mes (USD) *",
+                'label-availableHours': "Horario disponible para recibir solicitudes *",
+                'label-from': "Desde",
+                'label-to': "Hasta",
+                btnText: "Enviar registro",
+                successTitle: "¡Éxito!",
+                successMessage: "Tu registro se completó correctamente. Recibirás un correo de confirmación pronto.",
+                errorTitle: "Error:",
+                errorMessage: "Por favor verifica tus datos e intenta de nuevo.",
+                selectCountry: "-- Seleccionar --",
+                selectTimezone: "-- Seleccionar --"
+            },
+            en: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "Join our global transfer network",
+                'label-fullName': "Full Name *",
+                'label-age': "Age *",
+                'label-email': "Email *",
+                'label-country': "Country of Residence *",
+                'label-timezone': "Timezone *",
+                'label-worldcoinId': "Worldcoin User (World ID or handle) *",
+                'label-maxTransfer': "Maximum amount to transfer per month (USD) *",
+                'label-availableHours': "Available hours to receive requests *",
+                'label-from': "From",
+                'label-to': "To",
+                btnText: "Submit Registration",
+                successTitle: "Success!",
+                successMessage: "Your registration was completed successfully. You will receive a confirmation email soon.",
+                errorTitle: "Error:",
+                errorMessage: "Please check your data and try again.",
+                selectCountry: "-- Select --",
+                selectTimezone: "-- Select --"
+            },
+            th: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "เข้าร่วมเครือข่ายการโอนเงินทั่วโลก",
+                'label-fullName': "ชื่อเต็ม *",
+                'label-age': "อายุ *",
+                'label-email': "อีเมล *",
+                'label-country': "ประเทศที่อาศัย *",
+                'label-timezone': "เขตเวลา *",
+                'label-worldcoinId': "ผู้ใช้ Worldcoin (World ID หรือ handle) *",
+                'label-maxTransfer': "จำนวนเงินสูงสุดที่โอนได้ต่อเดือน (USD) *",
+                'label-availableHours': "เวลาที่พร้อมรับคำขอ *",
+                'label-from': "จาก",
+                'label-to': "ถึง",
+                btnText: "ส่งการลงทะเบียน",
+                successTitle: "สำเร็จ!",
+                successMessage: "การลงทะเบียนของคุณเสร็จสมบูรณ์แล้ว คุณจะได้รับอีเมลยืนยันในไม่ช้า",
+                errorTitle: "ข้อผิดพลาด:",
+                errorMessage: "โปรดตรวจสอบข้อมูลของคุณและลองอีกครั้ง",
+                selectCountry: "-- เลือก --",
+                selectTimezone: "-- เลือก --"
+            },
+            ja: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "グローバル送金ネットワークに参加",
+                'label-fullName': "フルネーム *",
+                'label-age': "年齢 *",
+                'label-email': "メール *",
+                'label-country': "居住国 *",
+                'label-timezone': "タイムゾーン *",
+                'label-worldcoinId': "Worldcoinユーザー (World ID またはハンドル) *",
+                'label-maxTransfer': "月間最大送金額 (USD) *",
+                'label-availableHours': "リクエスト受け入れ可能時間 *",
+                'label-from': "開始時刻",
+                'label-to': "終了時刻",
+                btnText: "登録を送信",
+                successTitle: "成功!",
+                successMessage: "登録が正常に完了しました。確認メールがまもなく届きます。",
+                errorTitle: "エラー:",
+                errorMessage: "データを確認してもう一度試してください。",
+                selectCountry: "-- 選択 --",
+                selectTimezone: "-- 選択 --"
+            },
+            ko: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "글로벌 송금 네트워크에 참여하세요",
+                'label-fullName': "전체 이름 *",
+                'label-age': "나이 *",
+                'label-email': "이메일 *",
+                'label-country': "거주국 *",
+                'label-timezone': "시간대 *",
+                'label-worldcoinId': "Worldcoin 사용자 (World ID 또는 핸들) *",
+                'label-maxTransfer': "월간 최대 송금액 (USD) *",
+                'label-availableHours': "요청 수신 가능 시간 *",
+                'label-from': "시작",
+                'label-to': "종료",
+                btnText: "등록 제출",
+                successTitle: "성공!",
+                successMessage: "등록이 성공적으로 완료되었습니다. 곧 확인 이메일을 받게 됩니다.",
+                errorTitle: "오류:",
+                errorMessage: "데이터를 확인하고 다시 시도하세요.",
+                selectCountry: "-- 선택 --",
+                selectTimezone: "-- 선택 --"
+            },
+            pt: {
+                title: "Worldcoin Transfer Network",
+                subtitle: "Junte-se à nossa rede de transferências global",
+                'label-fullName': "Nome Completo *",
+                'label-age': "Idade *",
+                'label-email': "Email *",
+                'label-country': "País de Residência *",
+                'label-timezone': "Fuso Horário *",
+                'label-worldcoinId': "Usuário Worldcoin (World ID ou handle) *",
+                'label-maxTransfer': "Valor máximo a transferir por mês (USD) *",
+                'label-availableHours': "Horário disponível para receber solicitações *",
+                'label-from': "De",
+                'label-to': "Para",
+                btnText: "Enviar Registro",
+                successTitle: "Sucesso!",
+                successMessage: "Seu registro foi concluído com sucesso. Você receberá um email de confirmação em breve.",
+                errorTitle: "Erro:",
+                errorMessage: "Por favor, verifique seus dados e tente novamente.",
+                selectCountry: "-- Selecionar --",
+                selectTimezone: "-- Selecionar --"
+            }
+        };
+
+        // Countries list
+        const countries = [
+            "Argentina", "Australia", "Austria", "Belgium", "Brazil", "Canada", "Chile", "China", 
+            "Colombia", "Costa Rica", "Czech Republic", "Denmark", "Ecuador", "Egypt", "Finland", 
+            "France", "Germany", "Greece", "Hong Kong", "Hungary", "India", "Indonesia", "Ireland", 
+            "Israel", "Italy", "Japan", "Kenya", "South Korea", "Mexico", "Netherlands", "New Zealand", 
+            "Nigeria", "Norway", "Peru", "Philippines", "Poland", "Portugal", "Romania", "Russia", 
+            "Saudi Arabia", "Singapore", "South Africa", "Spain", "Sweden", "Switzerland", "Taiwan", 
+            "Thailand", "Turkey", "United Kingdom", "United States", "Uruguay", "Vietnam"
+        ];
+
+        // Timezones
+        const timezones = [
+            "UTC-12", "UTC-11", "UTC-10", "UTC-09", "UTC-08", "UTC-07", "UTC-06", "UTC-05", 
+            "UTC-04", "UTC-03", "UTC-02", "UTC-01", "UTC", "UTC+01", "UTC+02", "UTC+03", 
+            "UTC+04", "UTC+05", "UTC+06", "UTC+07", "UTC+08", "UTC+09", "UTC+10", "UTC+11", "UTC+12"
+        ];
+
+        let currentLanguage = 'es';
+
+        // Initialize form
+        function initializeForm() {
+            populateCountries();
+            populateTimezones();
+            attachEventListeners();
+        }
+
+        function populateCountries() {
+            const select = document.getElementById('country');
+            select.innerHTML = `<option value="">${translations[currentLanguage].selectCountry}</option>`;
+            countries.forEach(country => {
+                const option = document.createElement('option');
+                option.value = country;
+                option.textContent = country;
+                select.appendChild(option);
+            });
+        }
+
+        function populateTimezones() {
+            const select = document.getElementById('timezone');
+            select.innerHTML = `<option value="">${translations[currentLanguage].selectTimezone}</option>`;
+            timezones.forEach(tz => {
+                const option = document.createElement('option');
+                option.value = tz;
+                option.textContent = tz;
+                select.appendChild(option);
+            });
+        }
+
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) btn.classList.add('active');
+            });
+            
+            // Update labels
+            Object.keys(translations[lang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) element.textContent = translations[lang][key];
+            });
+            
+            // Update selects
+            populateCountries();
+            populateTimezones();
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
+            });
+            
+            document.getElementById('registrationForm').addEventListener('submit', handleSubmit);
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            const form = document.getElementById('registrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('spinner');
+            const btnText = document.getElementById('btnText');
+            
+            // Validate form
+            if (!form.checkValidity()) {
+                showError(translations[currentLanguage].errorMessage);
+                return;
+            }
+            
+            // Collect data
+            const formData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                age: parseInt(document.getElementById('age').value),
+                email: document.getElementById('email').value.trim().toLowerCase(),
+                country: document.getElementById('country').value,
+                timezone: document.getElementById('timezone').value,
+                worldcoinId: document.getElementById('worldcoinId').value.trim(),
+                maxTransfer: parseFloat(document.getElementById('maxTransfer').value),
+                timeFrom: document.getElementById('timeFrom').value,
+                timeTo: document.getElementById('timeTo').value,
+                language: currentLanguage,
+                registeredAt: new Date().toISOString(),
+                ipAddress: 'client'
+            };
+            
+            // Validate data
+            if (formData.age < 18) {
+                showError("Age must be 18 or older");
+                return;
+            }
+            
+            if (formData.maxTransfer <= 0) {
+                showError("Transfer amount must be greater than 0");
+                return;
+            }
+            
+            if (formData.timeFrom >= formData.timeTo) {
+                showError("Start time must be before end time");
+                return;
+            }
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            spinner.classList.add('show');
+            btnText.textContent = currentLanguage === 'es' ? 'Enviando...' : 'Sending...';
+            
+            try {
+                // Replace with your Cloudflare Worker URL
+                const WORKER_URL = 'https://worldcoin-form.your-subdomain.workers.dev';
+                
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSuccess(translations[currentLanguage].successMessage);
+                    form.reset();
+                } else {
+                    showError(result.error || translations[currentLanguage].errorMessage);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError("Network error. Please try again.");
+            } finally {
+                submitBtn.disabled = false;
+                spinner.classList.remove('show');
+                btnText.textContent = translations[currentLanguage].btnText;
+            }
+        }
+
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successAlert').classList.add('show');
+            document.getElementById('errorAlert').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('successAlert').classList.remove('show');
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorAlert').classList.add('show');
+            document.getElementById('successAlert').classList.remove('show');
+            setTimeout(() => {
+                document.getElementById('errorAlert').classList.remove('show');
+            }, 5000);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeForm);
+    </script>
+</body>
+</html>
