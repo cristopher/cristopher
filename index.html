@@ -316,8 +316,23 @@
             </div>
         </div>
     </div>
+<script type="module">
+  import { IDKit } from "https://cdn.jsdelivr.net/npm/@worldcoin/idkit-standalone";
+    IDKit.init({
+  app_id: 'app_4107c7518df53e5648c74ff381bc55f4',
+  action: 'login',
+  verification_level: 'orb',
+  handleVerify: async (response) => {
+    const res = await fetch('https://idkit.cristopher.cl', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(response)
+    })
+    if (!res.ok) throw new Error('Verification failed')
+  }
+})
 
-    <script>
+    await IDKit.open()
         // Translations
         const translations = {
             es: {
