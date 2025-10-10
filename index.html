@@ -316,9 +316,9 @@
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@worldcoin/idkit-standalone@2.2.5/+esm"></script> 
 <script type="module">
-  import { IDKit } from "https://cdn.jsdelivr.net/npm/@worldcoin/idkit-standalone@2.2.5/+esm";
-    IDKit.init({
+    window.IDKit.init({
   app_id: 'app_4107c7518df53e5648c74ff381bc55f4',
   action: 'login',
   verification_level: 'orb',
@@ -332,7 +332,7 @@
   }
 })
 
-    await IDKit.open()
+    await window.IDKit.open()
         // Translations
         const translations = {
             es: {
