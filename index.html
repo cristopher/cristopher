@@ -331,8 +331,6 @@
     if (!res.ok) throw new Error('Verification failed')
   }
 })
-
-    await window.IDKit.open()
         // Translations
         const translations = {
             es: {
@@ -488,6 +486,7 @@
             populateCountries();
             populateTimezones();
             attachEventListeners();
+            await window.IDKit.open()
         }
 
         function populateCountries() {
